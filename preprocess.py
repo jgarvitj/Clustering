@@ -29,3 +29,5 @@ if __name__ == "__main__":
     p=preprocess()
     p.process()
     p.export()
+    print(p.dataSeq)
+
