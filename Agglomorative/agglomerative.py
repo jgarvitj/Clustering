@@ -23,27 +23,21 @@ pkl_file.close()
 max_clusters=dist.shape[0]
 link = np.zeros([max_clusters-1, 4])
 
-count=0
-
-# for i in seq:
-# 	if seq[i] not in hash_table:
-# 		hash_table[seq[i]]=count
-# 		count=count+1
-
 
 prev_clusters = {}
 
 count = 0
 
+#first set of clusters containing one element each.
 for i in seq:
 	prev_clusters[count] = [count]
 	count = count+1
 
 
-
-# print(prev_clusters)
-
 def cluster_dist(cl1, cl2, type):
+	'''find distance between two clusters based on
+		single linkage, complete linkage, and centroid method.
+	'''
 	val = 0
 	if type == "min":
 		val = 10000
@@ -66,7 +60,7 @@ def cluster_dist(cl1, cl2, type):
 		val = val/length
 	return val
 
-
+#linkage function to form dendogram
 def make_linkage_function(cluster_1, cluster_2, dist, len_cluster_2):
     link[cluster_number, 0]=cluster_2
     link[cluster_number, 1]=cluster_1
@@ -74,39 +68,40 @@ def make_linkage_function(cluster_1, cluster_2, dist, len_cluster_2):
     link[cluster_number, 3]=len_cluster_2
 
 def form_clusters(prev_clusters, cluster_number,max_index):
+	'''
+	Merge two from n clusters with closest distance to form n-1 clusters
+	'''
 	count = 0
 	vis = [0]*320
 
-	a = 0
-	b = 0
+	merge_index_1 = 0
+	merge_index_2 = 0
 	mini = 10000
 	
+	#find clusters with min distance in between
 	for i in prev_clusters:
 		for j in prev_clusters:
 			cl1 = prev_clusters[i]
 			cl2 = prev_clusters[j]
-			
-			
 			if i!=j and (cluster_dist(cl1, cl2, "min")<mini):
 				mini = cluster_dist(cl1, cl2, "min")
-				a = i
-				b = j
-
-
-	# print(a,b)
+				merge_index_1 = i
+				merge_index_2 = j
 
 	l = []
 	flag1 = 0
 	flag2 = 0
 	
-	if a!=b:
-		for j in prev_clusters[a]:
+
+	#merge clusters with min distance
+	if merge_index_1!=merge_index_2:
+		for j in prev_clusters[merge_index_1]:
 			if vis[j] == 0:
 				vis[j] = 1
 				l.append(j)
 				flag1 = 1
 				
-		for k in prev_clusters[b]:
+		for k in prev_clusters[merge_index_2]:
 			if vis[k] == 0:
 				vis[k] = 1
 				l.append(k)
@@ -117,15 +112,15 @@ def form_clusters(prev_clusters, cluster_number,max_index):
 			max_index=max_index+1
 			count = count+1
 
-	x=len(prev_clusters[a])+len(prev_clusters[b])	
+	x=len(prev_clusters[merge_index_1])+len(prev_clusters[merge_index_2])	
 
-
-	del prev_clusters[a]
-	del prev_clusters[b]	
+	#delete already merged clusters from original cluster set
+	del prev_clusters[merge_index_1]
+	del prev_clusters[merge_index_2]	
 
 	
 
-	make_linkage_function(a, b, mini, x)
+	make_linkage_function(merge_index_1, merge_index_2, mini, x)
 	
 	return prev_clusters,max_index
 
