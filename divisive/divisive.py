@@ -2,12 +2,13 @@ import numpy as np
 from scipy.cluster.hierarchy import dendrogram
 import pickle
 import matplotlib.pyplot as plt
-pkl_file = open("./pkl_files/matrix1.pkl","rb")
+pkl_file = open("../pkl_files/matrix.pkl","rb")
 distance_matrix = pickle.load(pkl_file)
 
 temp_file=open('./pkl_files/seq.pkl', 'rb')
 seq=pickle.load(temp_file)
-
+import time
+start = time.time()
 count1 = 0
 keys={}
 
@@ -76,7 +77,6 @@ def divide(cluster_index,split_index,max_val,cluster_number):
         clusters[old_cluster[0]]=old_cluster
         orig_cluster_key=old_cluster[0]
     else:
-        # print("old",old_cluster,max_val)
         max_val-=1
         clusters[max_val]=old_cluster
         orig_cluster_key=max_val
@@ -85,7 +85,6 @@ def divide(cluster_index,split_index,max_val,cluster_number):
         clusters[new_cluster[0]]=new_cluster
         new_cluster_key=new_cluster[0]
     else:
-        # print("new",old_cluster,max_val)
         max_val-=1
         clusters[max_val]=new_cluster
         new_cluster_key=max_val
@@ -100,6 +99,7 @@ while terminate():
     cluster_index,split_index,cluster_number=max_distance(cluster_number)
     max_index=divide(cluster_index,split_index,max_index,cluster_number)
     count=count+1
+print(time.time()-start)
 fig=plt.figure(figsize=(20, 8))
 plt.title("Dendrogram - Divisive Clustering")
 labels=['temp']*len(keys)

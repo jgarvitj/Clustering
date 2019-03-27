@@ -1,8 +1,11 @@
 import pickle
 import math
 import random
+import time
 
-pkl_file = open("pkl_files/matrix1.pkl", 'rb')
+start = 0
+stop = 0
+pkl_file = open("../pkl_files/matrix.pkl", 'rb')
 distance_matrix = pickle.load(pkl_file)
 pkl_file.close()
 
@@ -68,11 +71,13 @@ if __name__ == "__main__":
     #taking k as input
     k = input("enter k: ")
     k = int(k)
+    start = time.time()
     # getting k index using random function
     centroid_list = getKindexes(k)
     print("Iteration 1 centroids: ",centroid_list)
     formClusters()
     nxtIterations(100)
+    print(time.time()-start)
 
 
 
